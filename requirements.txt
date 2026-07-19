@@ -1,0 +1,9 @@
+flask
+joblib
+torch --index-url https://download.pytorch.org/whl/cpu
+git+https://github.com/facebookresearch/esm.git
+pandas
+tqdm
+biopython
+openpyxl
+gunicorn

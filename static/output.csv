@@ -1,0 +1,6 @@
+Seq ID,Header,Sequence,Length,Molecular Weight,pI,XGBoost Prediction,XGBoost Score
+seq1,>sp|Q7M425|NA13_BUNCI Delta-actitoxin-Bcs1a OS=Bunodosoma caissarum OX=31165 PE=1 SV=1,GVACRCDSDGPTSRGNTLTGTLWLTGGCPSGWHNCRGSGPFIGYCCKK,48,4978.59,8.68,Toxic,0.961794
+seq2,>P69110 Histone H3.2 OS=Tetrahymena americanis,MARTKQTARKSTGAKAPRKQLASKAARKSAPATGGIKKPHR,41,4343.08,12.0,Non-Toxic,0.004897
+seq3,>sp|P0DRJ2|TX1A_SELSX Mu-theraphotoxin-Ssp1a OS=Selenotypus sp. OX=3400313 PE=1 SV=1,DCLGWFSGCDPNNNKCCEGYVCHWKYPWCRYDL,33,3976.46,5.43,Toxic,0.997549
+seq4,>Q6YLT4 Cytochrome b559 subunit beta (PSII reaction center subunit VI) OS=Welwitschia mirabilis (Tree tumbo) (Welwitschia bainesii),MTIEKIYPIFTVRWLAVHGLAVPTVFFLGSISAMQFIQR,39,4482.36,9.98,Non-Toxic,0.005687
+seq5,>sp|Q0GY42|KBX2_TITCO Potassium channel toxin TcoKIK OS=Tityus costatus OX=309814 PE=1 SV=1,KIKSGWERLTSESEYACPAIDKFCEDHCAAKKAVGKCDDFKCNCIKL,47,5284.08,7.76,Toxic,0.894893

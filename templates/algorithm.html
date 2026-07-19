@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Design System Styles */
+    .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .section {
+        background: linear-gradient(135deg, #f5f7f8, #e8f0f3);
+        padding: 30px;
+        border-radius: 16px;
+        margin: 30px 0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        text-align: left;
+    }
+
+    h2 {
+        font-size: 30px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+        color: #2f5663;
+        text-align: center;
+    }
+
+    h2::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: #3F6E7F;
+        margin: 8px auto 0;
+        border-radius: 2px;
+    }
+
+    h3 {
+        font-size: 22px;
+        font-weight: 500;
+        color: #2f5663;
+        margin-top: 5px;
+        margin-bottom: 15px;
+    }
+
+    p {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #444;
+        margin-bottom: 15px;
+    }
+
+    ul {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        padding-left: 20px;
+    }
+
+    li {
+        font-size: 15px;
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 5px;
+    }
+
+    b, strong {
+        color: #2f5663;
+        font-weight: 600;
+    }
+
+    .intro-text {
+        max-width: 750px;
+        margin: 10px auto 30px;
+        text-align: center;
+    }
+
+    .algorithm-body {
+        max-width: 850px;
+        margin: auto;
+    }
+</style>
+
+<div class="container">
+    <h2>Algorithm</h2>
+
+    <p class="intro-text">
+        ToxESM is a peptide toxicity prediction framework that combines transformer-based
+        protein language models with machine learning classifiers. The system converts
+        peptide sequences into high-dimensional representations and uses trained models
+        to classify them as toxic or non-toxic.
+    </p>
+
+   <div style="
+    max-width: 1000px;
+    margin: 40px auto;
+    text-align: center;
+">
+
+   <img src="{{ url_for('static', filename='images/algorithm/algorithm3.png') }}"
+     alt="ToxESM Prediction Pipeline"
+     style="
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        display: block;
+        margin: 0 auto;
+     ">
+
+    <p style="
+        margin-top: 15px;
+        font-size: 14px;
+        color: #555;
+        max-width: 750px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    ">
+        Figure: Overview of the ToxESM pipeline showing sequence processing,
+        ESM-2 embedding generation, machine learning classification, and output analysis.
+    </p>
+
+</div>
+
+    <div class="algorithm-body">
+
+    <div class="section">
+        <h3>1. Sequence Input and Preprocessing</h3>
+        <p>
+            Users can provide peptide sequences either by pasting them in FASTA/plain
+            format or by uploading a FASTA file. Each sequence undergoes preprocessing:
+        </p>
+
+        <ul>
+            <li>Conversion to uppercase format</li>
+            <li>Removal of non-standard amino acids</li>
+            <li>Validation of sequence length (2–50 residues)</li>
+        </ul>
+
+        <p>
+            Sequences that do not meet these criteria are not processed for prediction
+            and are marked accordingly in the output.
+        </p>
+    </div>
+
+    <div class="section">
+        <h3>2. Feature Extraction using ESM-2</h3>
+        <p>
+            ToxESM uses the <strong>ESM-2 (Evolutionary Scale Modeling)</strong> protein language
+            model (<strong>esm2_t33_650M_UR50D</strong>) to generate numerical representations
+            (embeddings) for each peptide sequence.
+        </p>
+
+        <p>
+            The model treats amino acids as tokens and applies a transformer-based
+            architecture with self-attention to capture:
+        </p>
+
+        <ul>
+            <li>Sequence context and residue interactions</li>
+            <li>Evolutionary and functional patterns</li>
+            <li>Implicit structural information</li>
+        </ul>
+
+        <p>
+            For each sequence, residue-level embeddings are generated and then averaged
+            (mean pooling) to produce a fixed-length feature vector representing the
+            entire peptide.
+        </p>
+    </div>
+
+    <div class="section">
+        <h3>3. Machine Learning-Based Classification</h3>
+        <p>
+            The generated embeddings are used as input features for machine learning
+            classifiers trained on curated peptide datasets.
+        </p>
+
+        <p>
+            The model was trained on a dataset of <strong>8,828 peptide sequences</strong>,
+            consisting of:
+        </p>
+
+        <ul>
+            <li><strong>4,414 toxic peptides</strong></li>
+            <li><strong>4,414 non-toxic peptides</strong></li>
+        </ul>
+
+        <p>
+            The system was evaluated on an independent test set of
+            <strong>2,208 peptide sequences</strong> and further validated on external datasets
+            to ensure generalization performance.
+        </p>
+
+        <p>
+            The training and test datasets used in this study are available for download
+            from the <strong>Download</strong> section of this webserver.
+        </p>
+
+        <p>
+            The following models are available:
+        </p>
+
+        <ul>
+            <li><strong>XGBoost</strong> – High-performance gradient boosting model</li>
+            <li><strong>LightGBM</strong> – Efficient boosting model optimized for speed</li>
+            <li><strong>Extra Trees</strong> – Ensemble of randomized decision trees</li>
+        </ul>
+
+        <p>
+            Each model outputs a probability score between 0 and 1, representing the
+            likelihood of the peptide being toxic. A threshold of <strong>0.5</strong> is used
+            for classification:
+        </p>
+
+        <ul>
+            <li>Score ≥ 0.5 → Toxic</li>
+            <li>Score < 0.5 → Non-Toxic</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>4. Conservative Ensemble Mode</h3>
+        <p>
+            In addition to individual model predictions, ToxESM provides a
+            <strong>Conservative Ensemble Mode</strong> designed for safety-critical analysis.
+        </p>
+
+        <p>
+            In this mode, predictions from all three models (XGBoost, LightGBM,
+            Extra Trees) are combined using a strict rule:
+        </p>
+
+        <ul>
+            <li>If <strong>any</strong> model predicts "Toxic" → Final prediction = <strong>Toxic</strong></li>
+            <li>Only if <strong>all</strong> models predict "Non-Toxic" → Final prediction = <strong>Non-Toxic</strong></li>
+        </ul>
+
+        <p>
+            This approach minimizes false negatives and ensures that potentially toxic
+            peptides are not overlooked, making it suitable for high-sensitivity
+            screening applications.
+        </p>
+    </div>
+
+    <!--  NEW SECTION -->
+    <div class="section">
+        <h3>5. Residue-Level Importance Analysis</h3>
+        <p>
+            ToxESM provides a residue-level interpretability module to identify which amino
+            acids contribute most to the predicted toxicity of a peptide.
+        </p>
+
+        <p>
+            This analysis uses an <strong>occlusion-based approach</strong>, where each residue
+            is systematically removed and the resulting change in prediction score is measured.
+        </p>
+
+        <ul>
+            <li>The original toxicity score is computed for the full sequence</li>
+            <li>Each residue is removed one at a time to generate mutated sequences</li>
+            <li>The prediction score is recalculated for each mutated sequence</li>
+            <li>The difference in score quantifies residue importance</li>
+        </ul>
+
+        <p>
+            Residues that cause a larger decrease in predicted toxicity when removed are
+            considered more important for the model's decision.
+        </p>
+
+        <p>
+            To improve interpretability, negative contributions are discarded, small values
+            are treated as noise, and importance scores are normalized across the sequence.
+        </p>
+
+        <p>
+            The results are visualized using a color gradient:
+        </p>
+
+        <ul>
+            <li><strong>Grey</strong> → No significant contribution</li>
+            <li><strong>Light red</strong> → Weak contribution</li>
+            <li><strong>Dark red</strong> → Strong contribution</li>
+        </ul>
+
+        <p>
+            This analysis reflects model behavior and provides insight into residue-level
+            influence, but does not necessarily imply biological causation.
+        </p>
+    </div>
+
+    <div class="section">
+        <h3>6. Physiochemical Property Calculation</h3>
+        <p>
+            In addition to toxicity prediction, ToxESM computes several physiochemical
+            properties using the ProtParam module:
+        </p>
+
+        <ul>
+            <li>Sequence Length</li>
+            <li>Molecular Weight</li>
+            <li>Isoelectric Point (pI)</li>
+            <li>Net Charge</li>
+            <li>GRAVY Index (hydrophobicity)</li>
+            <li>Instability Index</li>
+            <li>Aromaticity</li>
+            <li>Molar Extinction Coefficient</li>
+        </ul>
+
+        <p>
+            Users can select which properties to display in the results table.
+        </p>
+    </div>
+
+    <div class="section">
+        <h3>7. Output Generation</h3>
+        <p>
+            The results are presented in a tabular format including:
+        </p>
+
+        <ul>
+            <li>Input sequence and header</li>
+            <li>Selected physiochemical properties</li>
+            <li>Model prediction(s) and probability score(s)</li>
+            <li>Final classification (for ensemble mode)</li>
+        </ul>
+
+        <p>
+            Results can also be downloaded as a CSV file for further analysis.
+        </p>
+    </div>
+
+    <div class="section">
+        <h3>8. Prediction Constraints</h3>
+        <p>
+            Predictions are reliable only for peptides within the defined length range
+            (2–50 amino acids). Sequences outside this range or containing invalid
+            residues are excluded from prediction.
+        </p>
+
+        <p>
+            Residue-level analysis is computationally intensive and is therefore limited
+            to single valid sequences within the supported length range.
+        </p>
+    </div>
+
+</div>
+</div>
+{% endblock %}

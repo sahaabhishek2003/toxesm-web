@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Design System Styles */
+    .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .section {
+        background: linear-gradient(135deg, #f5f7f8, #e8f0f3);
+        padding: 30px;
+        border-radius: 16px;
+        margin: 30px 0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        text-align: left;
+    }
+
+    h2 {
+        font-size: 30px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+        color: #2f5663;
+    }
+
+    h2::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: #3F6E7F;
+        margin-top: 8px;
+        border-radius: 2px;
+    }
+
+    p {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #444;
+        margin-bottom: 20px;
+    }
+
+    .btn-container {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .btn-action {
+        display: inline-block;
+        padding: 10px 24px;
+        font-size: 14px;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #3F6E7F, #2f5663);
+        color: #ffffff;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 5px 15px rgba(63,110,127,0.25);
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        color: #ffffff;
+    }
+</style>
+
+<div class="container">
+    <div class="section" style="text-align: center;">
+
+        <h2 style="display: inline-block; position: relative;">
+            About ToxESM
+        </h2>
+            <p>
+            ToxESM is a peptide toxicity prediction web platform designed to provide accurate,
+            scalable, and user-friendly analysis of peptide sequences. The system enables
+            researchers to rapidly screen peptides and classify them as toxic or non-toxic
+            using modern protein representation learning combined with robust machine learning
+            approaches. It aims to bridge the gap between recent advances in protein language
+            models and practical tools for biological research.
+            </p>
+
+            <p>
+            Predicting peptide toxicity is an essential step in areas such as therapeutic peptide
+            design, drug discovery, and functional annotation. Experimental validation, while
+            reliable, is often time-consuming and resource-intensive. Computational approaches
+            therefore play a critical role in pre-screening peptide candidates before laboratory
+            testing. However, many existing tools rely on handcrafted features or shallow sequence
+            representations, which may fail to capture complex biological patterns.
+            </p>
+
+            <p>
+            ToxESM addresses this limitation by leveraging transformer-based protein language
+            models to generate high-dimensional embeddings directly from raw peptide sequences.
+            These embeddings capture contextual, structural, and evolutionary information that
+            traditional feature engineering approaches often miss. By combining these rich
+            representations with well-established machine learning models, the platform achieves
+            a balance between predictive performance and computational efficiency.
+            </p>
+
+            <p>
+            The platform supports multiple machine learning models, including XGBoost, LightGBM,
+            and Extra Trees, each selected based on consistent performance across evaluation
+            metrics. In addition to individual models, ToxESM provides a conservative ensemble
+            mode that prioritizes safety by reducing false negatives. In this mode, a peptide is
+            classified as toxic if any model predicts toxicity, making it particularly suitable
+            for high-sensitivity screening applications.
+            </p>
+
+            <p>
+            Beyond classification, ToxESM offers optional physicochemical property analysis,
+            including molecular weight, isoelectric point, net charge, hydrophobicity (GRAVY),
+            instability index, and aromaticity. These features provide additional biological
+            context and allow users to better interpret the properties of predicted peptides
+            without relying on external tools.
+            </p>
+
+            <p>
+            To ensure reliability, the models integrated within ToxESM have been evaluated on
+            independent datasets and benchmarked against existing peptide toxicity prediction
+            tools. The results demonstrate competitive performance across multiple metrics,
+            including ROC-AUC, PR-AUC, F1-score, and MCC. This evaluation framework was designed
+            to minimize bias and provide users with confidence in the predictions generated by
+            the system.
+            </p>
+
+            <p>
+            ToxESM is designed with usability and accessibility in mind. It supports both single
+            sequence input and batch processing through FASTA files, allowing efficient analysis
+            of multiple peptides. The interface is intentionally simple and focused, enabling
+            users to perform predictions without unnecessary complexity. Results are presented
+            in a structured format and can be downloaded for further analysis.
+            </p>
+
+            <p>
+            Overall, ToxESM provides a modern, integrated solution for peptide toxicity prediction,
+            combining advances in protein language modeling with interpretable machine learning.
+            The platform emphasizes accuracy, transparency, and ease of use, making it a valuable
+            resource for researchers in bioinformatics, computational biology, and related fields.
+            </p>
+
+        <div class="btn-container">
+            <a href="/predict" class="btn-action">Get Started with Predictions</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

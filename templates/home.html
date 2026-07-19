@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    max-width:900px;
+    margin:60px auto;
+    padding:70px 50px;
+    border-radius:20px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    background: linear-gradient(135deg, #f5f7f8, #e3eef2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+">
+
+    <!-- SUBTLE BACKGROUND GLOW -->
+    <div style="
+        position:absolute;
+        width:300px;
+        height:300px;
+        background: rgba(63,110,127,0.15);
+        border-radius:50%;
+        top:-80px;
+        left:-80px;
+        filter: blur(60px);
+    "></div>
+
+    <div style="
+        position:absolute;
+        width:250px;
+        height:250px;
+        background: rgba(63,110,127,0.12);
+        border-radius:50%;
+        bottom:-80px;
+        right:-80px;
+        filter: blur(60px);
+    "></div>
+
+    <!-- CONTENT -->
+    <h1 style="
+        font-size:48px;
+        margin-bottom:15px;
+        letter-spacing:1px;
+    ">
+        ToxESM
+    </h1>
+<hr style="width:60px; margin:15px auto; border:2px solid #3F6E7F; border-radius:2px;">
+    <p style="
+        max-width:650px;
+        margin: 20px auto 35px;
+        font-size:16px;
+        line-height:1.7;
+        color:#444;
+    ">
+        ToxESM is a transformer-based peptide toxicity prediction platform that integrates
+        ESM-2 embeddings with machine learning models to accurately classify peptides as
+        toxic or non-toxic.
+    </p>
+
+    <a href="/predict">
+        <button style="
+            padding:12px 28px;
+            font-size:15px;
+            border-radius:25px;
+            background: linear-gradient(135deg, #3F6E7F, #2f5663);
+            color:white;
+            border:none;
+            cursor:pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 5px 15px rgba(63,110,127,0.3);
+        "
+        onmouseover="this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.transform='translateY(0)'"
+        >
+            Run Toxicity Prediction
+        </button>
+    </a>
+
+</div>
+{% endblock %}

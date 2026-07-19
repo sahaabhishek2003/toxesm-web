@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToxESM - Peptide Toxicity Prediction</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================
+           1. ROOT & GLOBAL STYLES
+        ========================= */
+        :root {
+            --primary-color: #3F6E7F;
+            --primary-dark: #2f5663;
+            --bg-color: #F5F0E6;2f5663
+            --card-bg: #ffffff;
+            --text-main: #2C2C2C;
+            --text-muted: #444;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --lift-timing: cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-top: 90px;
+            line-height: 1.7;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================
+           2. NAVIGATION
+        ========================= */
+        .navbar {
+            background: #2f5663;
+            position: fixed;
+            top: 0; width: 100%; z-index: 1000; height: 60px;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .navbar a {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0 15px; text-decoration: none; font-weight: 500; font-size: 14px;
+            letter-spacing: 0.4px; transition: var(--transition);
+            padding: 8px 12px; border-radius: 6px; position: relative;
+            display: inline-block;
+        }
+
+        .navbar a:hover {
+            color: #fff; background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .navbar a:active { transform: translateY(0) scale(0.98); }
+
+        .navbar a::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: 4px; left: 50%; background-color: #fff; transition: var(--transition);
+        }
+        .navbar a:hover::after { width: 60%; left: 20%; }
+
+        /* SUBTLE ACTIVE NAV LINK (SCIENTIFIC STYLE) */
+.navbar a.active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.15),
+        inset 0 0 2px rgba(255,255,255,0.08);
+
+    transform: translateY(-0.5px);
+}
+
+/* SUBTLE UNDERLINE */
+.navbar a.active::after {
+    width: 50%;
+    left: 25%;
+    background: rgba(255,255,255,0.7);
+}
+
+        /* =========================
+           3. THE LAYERED LIFT (CORE FIX)
+        ========================= */
+        .container { max-width: 960px; margin: 0 auto; padding: 0 20px 40px; }
+
+        /* Main Card Lift */
+        .card {
+            background: var(--card-bg);
+            padding: 40px; border-radius: 16px;
+            box-shadow: 0px 8px 30px rgba(0,0,0,0.06);
+            transition: transform 0.4s var(--lift-timing), box-shadow 0.4s ease;
+            will-change: transform, box-shadow;
+        }
+
+        .card:hover {
+            transform: perspective(1000px) translateY(-8px) scale(1.005);
+            box-shadow: 0px 20px 60px rgba(0,0,0,0.1);
+        }
+
+        /* Nested Section (Double Lift) */
+        .section {
+            background: linear-gradient(135deg, #f5f7f8, #e8f0f3);
+            padding: 30px; border-radius: 15px; margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+            text-align: left;
+            transition: transform 0.3s var(--lift-timing), box-shadow 0.3s ease, background 0.3s ease;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .section:hover {
+            transform: translateY(-6px) scale(1.01);
+            background: linear-gradient(135deg, #f8fafb, #eef3f5) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            z-index: 5;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================
+           4. FORM ELEMENTS & BUTTONS
+        ========================= */
+        textarea, select {
+            width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #ced4da;
+            font-family: inherit; box-sizing: border-box; transition: var(--transition);
+            background-color: #ffffff;
+        }
+
+        textarea:focus, select:focus {
+            outline: none; border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(63, 110, 127, 0.12);
+            transform: translateY(-1px);
+        }
+
+        button, .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white; border: none; padding: 12px 28px; border-radius: 25px;
+            font-size: 15px; font-weight: 500; cursor: pointer; transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(63, 110, 127, 0.2); text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(63, 110, 127, 0.3); }
+        button:active { transform: translateY(1px) scale(0.98); }
+
+        /* =========================
+           5. TABLES & UTILITIES
+        ========================= */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0px 4px 12px rgba(0,0,0,0.05); }
+        th { background-color: var(--primary-color); color: white; padding: 14px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; color: var(--text-muted); transition: background-color 0.2s ease; }
+        tr:hover td { background-color: #f1f7f9; color: var(--primary-dark); }
+
+        .pulse-text { animation: pulse 1.5s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        .full-screen-mode {
+            position: fixed !important; top: 0 !important; left: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            z-index: 10001 !important; background: white !important;
+            padding: 40px !important; box-sizing: border-box !important; overflow: auto !important;
+        }
+        .no-transform { transform: none !important; box-shadow: none !important; }
+
+        .spinner { margin: 20px auto; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+     /* =========================================
+   UNIFIED HEADING & UNDERLINE STYLES
+   ========================================= */
+
+/* 1. The Heading Text */
+h2,
+.main-title,
+.section h2,
+.card h2 {
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 25px !important;
+    position: relative !important;
+    color: #2f5663; /* Your primary dark color */
+}
+
+/* 2. The Decorative Underline */
+/* We use only ONE rule to prevent the "Double Line" issue in your screenshot */
+h2::after,
+.main-title::after,
+.section h2::after,
+.card h2::after,
+.h2-underline {
+    content: '' !important;
+    display: block !important;
+    width: 60px !important;
+    height: 3px !important;
+    background: #3F6E7F !important; /* Your primary teal color */
+    margin: 10px auto 0 !important; /* The ONLY margin rule you need */
+    border-radius: 2px !important;
+}
+
+/* 3. Center any intro paragraph immediately following an H2 */
+h2 + p,
+.section h2 + p {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 800px;
+}
+
+/* =========================================
+   FULL SCREEN & UTILITY STYLES
+   ========================================= */
+body.is-full-screen .card,
+body.is-full-screen .container {
+    transform: none !important;
+    perspective: none !important;
+    filter: none !important;
+    max-width: none !important;
+}
+
+.full-screen-mode {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    background: white !important;
+    padding: 80px 20px 20px 20px !important;
+    box-sizing: border-box !important;
+    overflow: auto !important;
+}
+
+.exit-btn-circle {
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50% !important;
+}
+        .code-block {
+    background: #0f172a;
+    color: #e5e7eb;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/">Home</a>
+        <a href="/predict">Prediction</a>
+        <a href="/algorithm">Algorithm</a>
+        <a href="/performance">Performance</a>
+        <a href="/residue_analysis">Residue Analysis</a>
+        <a href="/download">Download</a>
+        <a href="/about">About</a>
+        <a href="/history">History</a>
+        <a href="/contact">Contact</a>
+    </nav>
+
+    <main class="container">
+        <div class="card fade-in" id="main-card">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <script>
+        // Use DOMContentLoaded for faster trigger than window.onload
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainCard = document.getElementById('main-card');
+            if (mainCard) {
+                mainCard.classList.add('visible');
+            }
+        });
+
+        // Global Escape Key Listener for Full Screen Mode
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") {
+                const fsContainer = document.querySelector('.full-screen-mode');
+                if (fsContainer && typeof toggleFullScreen === "function") {
+                    toggleFullScreen();
+                }
+            }
+        });
+        // Highlight active navbar link
+const links = document.querySelectorAll(".navbar a");
+const currentPath = window.location.pathname;
+
+links.forEach(link => {
+    if (link.getAttribute("href") === currentPath) {
+        link.classList.add("active");
+    }
+});
+    </script>
+</body>
+</html>

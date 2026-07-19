@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Design System Implementation */
+    .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .section {
+        background: linear-gradient(135deg, #f5f7f8, #e8f0f3);
+        padding: 30px;
+        border-radius: 16px;
+        margin: 30px 0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        text-align: left;
+    }
+
+    h2 {
+        font-size: 30px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+        color: #2f5663;
+        text-align: center;
+    }
+
+    h2::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: #3F6E7F;
+        margin: 8px auto 0;
+        border-radius: 2px;
+    }
+
+    p {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #444;
+    }
+
+    .contact-card {
+        max-width: 500px;
+        margin: 20px auto;
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+
+    .contact-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2f5663;
+        margin-bottom: 5px;
+    }
+
+    .contact-info {
+        font-size: 15px;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+    .email-link {
+        display: inline-block;
+        margin-top: 5px;
+        color: #3F6E7F;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .email-link:hover {
+        color: #2f5663;
+        text-decoration: underline;
+    }
+
+    .label {
+        color: #2f5663;
+        font-weight: 600;
+        display: block;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="section">
+        <h2>Contact</h2>
+
+        <p style="max-width:650px; margin: 10px auto 35px; text-align: center;">
+            For queries, feedback, or collaboration opportunities, please reach out using the contact details below.
+        </p>
+
+        <div class="contact-card">
+            <p class="contact-name">
+                Abhishek Saha
+            </p>
+
+            <p class="contact-info">
+                Department of Bioinformatics<br>
+                Pondicherry University
+            </p>
+
+            <div style="margin-top:20px; border-top: 1px solid #eee; padding-top: 15px;">
+                <span class="label">Email</span>
+                <a href="mailto:abhisheksal@bicpu.edu.in" class="email-link">
+                    abhisheksal@bicpu.edu.in
+                </a>
+            </div>
+            <div style="margin-top:20px; border-top: 1px solid #eee; padding-top: 15px;">
+    <span class="label">GitHub</span>
+    <a href="https://github.com/sahaabhishek2003/toxesm" target="_blank" class="email-link">
+        github.com/sahaabhishek2003/toxesm
+    </a>
+</div>
+
+<div style="margin-top:15px;">
+    <span class="label">LinkedIn</span>
+    <a href="https://www.linkedin.com/in/abhishek-saha-750710253/" target="_blank" class="email-link">
+        linkedin.com/in/abhishek-saha-750710253
+    </a>
+</div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

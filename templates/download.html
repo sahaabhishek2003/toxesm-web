@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Design System Styles */
+    .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .section {
+        background: linear-gradient(135deg, #f5f7f8, #e8f0f3);
+        padding: 30px;
+        border-radius: 16px;
+        margin: 30px 0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        text-align: left;
+    }
+
+    h2 {
+        font-size: 30px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+        color: #2f5663;
+        /* Aligned title to center */
+        text-align: center;
+    }
+
+    h2::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: #3F6E7F;
+        border-radius: 2px;
+        /* Aligned underline to center */
+        margin: 8px auto 0;
+    }
+
+    h3 {
+        font-size: 22px;
+        font-weight: 500;
+        color: #2f5663;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    p {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #444;
+        /* Aligned descriptive text to center for top header */
+        text-align: center;
+    }
+
+    .section-desc-left {
+        text-align: left;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 20px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #3F6E7F;
+        color: #ffffff;
+        padding: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    td {
+        padding: 15px;
+        font-size: 14px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        color: #444;
+    }
+
+    td:last-child {
+        text-align: center;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover {
+        background: #f8fafb;
+    }
+
+    .download-link {
+        display: inline-block;
+        padding: 8px 20px;
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #3F6E7F, #2f5663);
+        color: #ffffff;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 10px rgba(63,110,127,0.2);
+    }
+
+    .download-link:hover {
+        transform: translateY(-2px);
+        color: #ffffff;
+        box-shadow: 0 6px 15px rgba(63,110,127,0.3);
+    }
+</style>
+
+<div class="container">
+    <div class="section">
+        <h2>Download</h2>
+
+        <p style="max-width:700px; margin: 10px auto 30px;">
+            The datasets used for training and evaluation of ToxESM are provided below.
+            These datasets can be used for benchmarking and further research.
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dataset</th>
+                        <th>Description</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: 600;">Training Dataset</td>
+                        <td>Curated dataset used for model training.</td>
+                        <td>
+                            <a href="/download_file/train_dataset.csv" class="download-link">
+                                Download
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Test Dataset</td>
+                        <td>Independent dataset used for evaluation.</td>
+                        <td>
+                            <a href="/download_file/test_dataset.csv" class="download-link">
+                                Download
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Independent Validation Dataset</h3>
+
+        <p class="section-desc-left" style="max-width:700px; margin: 10px 0 20px;">
+            Dataset used for independent validation of ToxESM is provided below.
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dataset</th>
+                        <th>Description</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: 600;">Independent Validation Dataset</td>
+                        <td>Dataset used for external validation and comparison with existing tools.</td>
+                        <td>
+                            <a href="/download_file/Independent_Dataset_for_model_testing.xlsx" class="download-link">
+                                Download
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="section">
+    <h3>Run ToxESM Locally</h3>
+
+    <p class="section-desc-left" style="max-width:700px; margin: 10px 0 20px;">
+        ToxESM is also available as a standalone command-line tool.
+        You can install and run it locally for large-scale or offline analysis.
+    </p>
+
+    <div style="margin-top:15px;">
+        <p style="text-align:left; font-weight:500; margin-bottom:5px;">
+            Installation:
+        </p>
+        <div class="code-block">
+            pip install git+https://github.com/sahaabhishek2003/toxesm.git
+        </div>
+    </div>
+
+    <div style="margin-top:20px;">
+        <p style="text-align:left; font-weight:500; margin-bottom:5px;">
+            Usage:
+        </p>
+        <div class="code-block">
+            toxesm input.fasta
+        </div>
+    </div>
+</div>
+{% endblock %}

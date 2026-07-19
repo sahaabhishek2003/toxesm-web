@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .section {
+        background: linear-gradient(135deg, #f5f7f8, #e8f0f3);
+        padding: 30px;
+        border-radius: 16px;
+        margin: 30px 0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 30px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #2f5663;
+    }
+
+    .desc {
+        max-width: 700px;
+        margin: 10px auto;
+        font-size: 15px;
+        line-height: 1.7;
+        color: #444;
+    }
+
+    textarea {
+        width: 100%;
+        max-width: 650px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-family: monospace;
+        font-size: 14px;
+        resize: vertical;
+    }
+
+    .btn-main {
+        margin-top: 15px;
+        padding: 10px 25px;
+        font-size: 14px;
+        border-radius: 25px;
+        background: linear-gradient(135deg, #3F6E7F, #2f5663);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 0 5px 15px rgba(63,110,127,0.25);
+    }
+
+    .btn-main:hover {
+        transform: translateY(-2px);
+    }
+
+    .note {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #777;
+    }
+
+    .error {
+        color: #d9534f;
+        margin-top: 15px;
+        font-weight: 500;
+    }
+
+    .result-box {
+        margin-top: 30px;
+    }
+
+    .sequence {
+        font-family: monospace;
+        font-size: 18px;
+        word-wrap: break-word;
+        line-height: 1.8;
+    }
+
+    .legend {
+        margin-top: 15px;
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+    }
+</style>
+
+<div class="container">
+    <div class="section">
+
+        <!-- HEADER + BUTTON -->
+       <div style="text-align:center; margin-bottom:10px;">
+    <h2 style="margin:0;">Residue Analysis</h2>
+       </div>
+
+        <!-- WHAT -->
+        <p class="desc" style="text-align:center;">
+            This module provides residue-level interpretability for peptide toxicity prediction.
+            Each amino acid is evaluated to determine its contribution to the predicted toxicity.
+        </p>
+
+        <!-- HOW -->
+        <p class="desc" style="text-align:center;">
+            The analysis uses an <b>occlusion-based approach</b>, where each residue is
+            systematically perturbed and the resulting change in prediction score is measured.
+        </p>
+
+        <!-- INPUT -->
+        <form method="POST" onsubmit="showLoading()">
+
+    <!-- BUTTON ABOVE TEXTAREA (RIGHT ALIGNED) -->
+    <div style="max-width:650px; margin:0 auto 8px; display:flex; justify-content:flex-end;">
+        <button type="button" onclick="loadExample()" class="btn-main" style="padding:6px 14px; font-size:12px;">
+            Load Example Sequence
+        </button>
+    </div>
+
+    <textarea id="sequenceBox" name="sequence" rows="4"
+        placeholder="Enter amino acid sequence or FASTA..."></textarea>
+
+    <br>
+
+    <button type="submit" class="btn-main" style="margin-bottom:15px;">Analyze</button>
+
+            <!-- LOADING -->
+            <div id="loading" style="display:none; margin-top:15px;">
+                <div class="spinner"></div>
+                <div style="font-size:13px; color:#666;">Running analysis...</div>
+            </div>
+
+        </form>
+
+        <!-- WARNING -->
+        <p class="note">
+            ⚠️ Only single sequence supported. This analysis may take a few seconds.
+        </p>
+
+        <!-- SCIENTIFIC NOTE -->
+        <p class="note">
+            This reflects model behavior and does not imply biological causation.
+        </p>
+
+        <!-- ERROR -->
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <!-- RESULT -->
+        {% if importance and sequence %}
+        <div class="result-box">
+
+            <h3>Residue Importance</h3>
+
+            <div class="sequence">
+                {% for i in range(sequence|length) %}
+                    {% set val = importance[i] %}
+
+                    <span
+                        title="Importance: {{ val | round(3) }}"
+                        style="
+                             color: rgb(200, 20, 40);
+                             opacity: {{ 0.25 + (val * 0.75) }};
+                             font-weight: {% if val > 0.4 %}600{% else %}400{% endif %};
+                             text-shadow: 0 0 1px rgba(0,0,0,0.15);
+">
+                        {{ sequence[i] }}
+                    </span>
+
+                {% endfor %}
+            </div>
+
+            <!-- INTERPRETATION -->
+            <div class="legend">
+                <b>How to interpret:</b><br>
+                • Light red → weak contribution<br>
+                • Dark red → strong contribution<br>
+                • Hover to see exact score<br>
+            </div>
+
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<!-- SCRIPT -->
+<script>
+function loadExample() {
+    const sample = `>sp|Q7M425|NA13_BUNCI Delta-actitoxin-Bcs1a OS=Bunodosoma caissarum OX=31165 PE=1 SV=1
+GVACRCDSDGPTSRGNTLTGTLWLTGGCPSGWHNCRGSGPFIGYCCKK`;
+
+    document.getElementById("sequenceBox").value = sample;
+}
+
+function showLoading() {
+    document.getElementById("loading").style.display = "block";
+}
+</script>
+
+<script>
+function showLoader() {
+    document.getElementById("loadingSpinner").style.display = "block";
+}
+</script>
+
+{% endblock %}

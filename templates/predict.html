@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* Internal styles for specific form elements to meet design specs */
+    .container {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .section {
+        background: linear-gradient(135deg, #f5f7f8, #e8f0f3);
+        padding: 30px;
+        border-radius: 16px;
+        margin: 30px 0;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+        text-align: left;
+    }
+
+    h2 {
+        font-size: 30px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+        color: #2f5663;
+    }
+
+    h2::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: #3F6E7F;
+        margin-top: 8px;
+        border-radius: 2px;
+    }
+
+    h3 {
+        font-size: 22px;
+        font-weight: 500;
+        color: #2f5663;
+        margin-top: 0;
+        margin-bottom: 15px;
+    }
+
+    p {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #444;
+    }
+
+    label {
+        font-weight: 500;
+        color: #2f5663;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        font-family: monospace;
+        font-size: 14px;
+        resize: vertical;
+        box-sizing: border-box;
+    }
+
+    select, input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        background: white;
+        box-sizing: border-box;
+    }
+
+    .btn-submit, .btn-secondary {
+        display: inline-block;
+        padding: 10px 24px;
+        font-size: 14px;
+        border-radius: 25px;
+        color: #ffffff;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #3F6E7F, #2f5663);
+        box-shadow: 0 5px 15px rgba(63,110,127,0.25);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-submit:disabled {
+        background: #99abb3;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-secondary {
+        background: #3F6E7F;
+        padding: 6px 16px;
+        font-size: 13px;
+        border-radius: 20px;
+    }
+
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #444;
+    }
+
+    .center-container {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 40px;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3F6E7F;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 15px auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="container">
+    <h2>Toxicity Prediction</h2>
+
+    <p style="max-width: 800px;">
+        Enter peptide sequences in FASTA or plain format, or upload a FASTA file.
+        Select a prediction model and optional physiochemical properties to display.
+    </p>
+
+    <form method="POST" enctype="multipart/form-data" id="predict-form">
+
+        <div class="section">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                <h3>Sequence Input</h3>
+                <button type="button" onclick="loadExample()" class="btn-secondary">
+                    Load Example Sequences
+                </button>
+            </div>
+
+            <label for="sequenceBox">Paste Sequence:</label>
+            <textarea id="sequenceBox" name="sequence" placeholder=">seq1&#10;ACDEFGHIK"></textarea>
+        </div>
+
+        <div class="section">
+            <h3>File Upload</h3>
+            <label>Or Upload FASTA File:</label>
+            <input type="file" name="file">
+        </div>
+
+        <div class="section">
+            <h3>Model Selection</h3>
+            <label>Select Model:</label>
+            <select name="model_choice">
+                <option value="xgb">XGBoost</option>
+                <option value="lgbm">LightGBM</option>
+                <option value="et">Extra Trees</option>
+                <option value="ensemble">Conservative Ensemble Mode</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <h3>Physiochemical Parameters</h3>
+            <p style="font-size: 13px; margin-bottom: 10px;">Select properties to include in the results table.</p>
+
+            <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="checkbox" name="features" value="length" checked> Length</label>
+                <label class="checkbox-item"><input type="checkbox" name="features" value="mw" checked> Molecular Weight</label>
+                <label class="checkbox-item"><input type="checkbox" name="features" value="pi" checked> pI</label>
+                <label class="checkbox-item"><input type="checkbox" name="features" value="charge"> Net Charge</label>
+                <label class="checkbox-item"><input type="checkbox" name="features" value="gravy"> GRAVY Index</label>
+                <label class="checkbox-item"><input type="checkbox" name="features" value="instability"> Instability Index</label>
+                <label class="checkbox-item"><input type="checkbox" name="features" value="aromaticity"> Aromaticity</label>
+                <label class="checkbox-item"><input type="checkbox" name="features" value="extinction"> Molar Extinction</label>
+            </div>
+        </div>
+
+        <div class="center-container">
+            <button type="submit" id="submit-btn" class="btn-submit">Run Prediction</button>
+
+            <div id="loading" style="display:none; margin-top:25px;">
+                <p style="color:#3F6E7F; font-weight:500;">
+                    Running prediction... please wait
+                </p>
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script>
+document.getElementById("predict-form").addEventListener("submit", function() {
+    const btn = document.getElementById("submit-btn");
+    btn.disabled = true;
+    btn.innerText = "Running...";
+    document.getElementById("loading").style.display = "block";
+});
+</script>
+
+<script>
+function loadExample() {
+    const example = `>sp|Q7M425|NA13_BUNCI Delta-actitoxin-Bcs1a OS=Bunodosoma caissarum OX=31165 PE=1 SV=1
+GVACRCDSDGPTSRGNTLTGTLWLTGGCPSGWHNCRGSGPFIGYCCKK
+
+>P69110 Histone H3.2 OS=Tetrahymena americanis
+MARTKQTARKSTGAKAPRKQLASKAARKSAPATGGIKKPHR
+
+>sp|P0DRJ2|TX1A_SELSX Mu-theraphotoxin-Ssp1a OS=Selenotypus sp. OX=3400313 PE=1 SV=1
+DCLGWFSGCDPNNNKCCEGYVCHWKYPWCRYDL
+
+>Q6YLT4 Cytochrome b559 subunit beta (PSII reaction center subunit VI) OS=Welwitschia mirabilis (Tree tumbo) (Welwitschia bainesii)
+MTIEKIYPIFTVRWLAVHGLAVPTVFFLGSISAMQFIQR
+
+>sp|Q0GY42|KBX2_TITCO Potassium channel toxin TcoKIK OS=Tityus costatus OX=309814 PE=1 SV=1
+KIKSGWERLTSESEYACPAIDKFCEDHCAAKKAVGKCDDFKCNCIKL`;
+
+    document.getElementById("sequenceBox").value = example;
+}
+</script>
+{% endblock %}
+
