@@ -14,9 +14,10 @@ import numpy as np
 # ============================================================
 VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
 HF_API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/facebook/esm2_t33_650M_UR50D"
-HF_TOKEN = "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"
-HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
 
+# Read the token dynamically from the system environment
+HF_TOKEN = os.environ.get("HF_TOKEN")
+HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 # ============================================================
 # API HELPER FOR EMBEDDINGS
