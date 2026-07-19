@@ -13,7 +13,9 @@ import numpy as np
 # CONSTANTS & HUGGING FACE API CONFIG
 # ============================================================
 VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
-HF_API_URL = "https://api-inference.huggingface.co/pipeline/feature-extraction/facebook/esm2_t33_650M_UR50D"
+
+# Updated Hugging Face global inference routing endpoint
+HF_API_URL = "https://router.huggingface.co/hf-inference/models/facebook/esm2_t33_650M_UR50D"
 
 # Read the token dynamically from the system environment
 HF_TOKEN = os.environ.get("HF_TOKEN")
