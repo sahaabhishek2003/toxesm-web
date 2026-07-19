@@ -1,10 +1,8 @@
 # ============================================================
 # IMPORTS
 # ============================================================
-from flask import Flask, render_template, request,send_file, session
+from flask import Flask, render_template, request, send_file, session
 import joblib
-import torch
-import esm
 import os
 from predict_module import run_prediction
 from datetime import datetime
@@ -33,20 +31,11 @@ model_names = {
     "et": "Extra Trees"
 }
 
-
 # ============================================================
-# LOAD ESM MODEL
+# ESM MODEL (OFFLOADED TO API)
 # ============================================================
-print("Loading ESM model...")
-
-esm_model, alphabet = esm.pretrained.esm2_t33_650M_UR50D()
-batch_converter = alphabet.get_batch_converter()
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Using device: {device}")
-
-esm_model = esm_model.to(device)
-esm_model.eval()
+print("ESM-2 configured via cloud API.")
+esm_model, alphabet, batch_converter, device = None, None, None, "cpu"
 
 
 # ============================================================
@@ -219,10 +208,6 @@ def residue_analysis():
         if not sequence or not sequence.strip():
             return render_template("residue_analysis.html", error="Please enter a sequence.")
 
-        # Clean sequence
-        VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
-        sequence = "".join([aa for aa in sequence.upper() if aa in VALID_AA])
-
         if len(sequence) < 2 or len(sequence) > 50:
             return render_template(
                 "residue_analysis.html",
@@ -321,7 +306,6 @@ def view_history(job_id):
                 table=h["table"],
                 summary=h["summary"],
                 note=h["note"]
-
             )
 
     return "Result not found"
@@ -338,8 +322,6 @@ def download_result():
     return send_file("static/output.csv", as_attachment=True)
 
 
-
-
 @app.route("/download_file/<filename>")
 def download_file(filename):
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -354,6 +336,5 @@ def download_file(filename):
 # ============================================================
 # RUN SERVER
 # ============================================================
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=7860, debug=False)
