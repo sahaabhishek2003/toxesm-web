@@ -14,12 +14,13 @@ import numpy as np
 # ============================================================
 VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
 
-# Updated Hugging Face global inference routing endpoint
-HF_API_URL = "https://router.huggingface.co/hf-inference/models/facebook/esm2_t33_650M_UR50D"
+# Secure routing endpoint for the serverless inference engine
+HF_API_URL = "https://api-inference.huggingface.co/models/facebook/esm2_t33_650M_UR50D"
 
 # Read the token dynamically from the system environment
 HF_TOKEN = os.environ.get("HF_TOKEN")
 HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
+
 
 # ============================================================
 # API HELPER FOR EMBEDDINGS
@@ -27,26 +28,54 @@ HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
 def get_esm_embeddings_api(sequences):
     """
     Queries Hugging Face's Serverless API to get embeddings for a list of sequences.
+    Adapts safely to 3D and 2D response formats to avoid dimension failures.
     """
     embeddings_dict = {}
     if not sequences:
         return embeddings_dict
 
+    if not HF_TOKEN:
+        print("CRITICAL WARNING: HF_TOKEN environment variable is missing on Render settings.")
+        return embeddings_dict
+
+    # Serverless option to force model wakeup if it's currently sleeping
     payload = {"inputs": sequences, "options": {"wait_for_model": True}}
 
     try:
         response = requests.post(HF_API_URL, json=payload, headers=HEADERS, timeout=60)
 
+        # Handle 503 fallback if model requires more time to start up
         if response.status_code == 503:
-            time.sleep(10)
+            time.sleep(12)
             response = requests.post(HF_API_URL, json=payload, headers=HEADERS, timeout=60)
 
         if response.status_code == 200:
             output = response.json()
-            for idx, seq in enumerate(sequences):
-                seq_emb = np.array(output[idx])
-                mean_emb = seq_emb[1:-1].mean(axis=0)
-                embeddings_dict[idx] = mean_emb
+
+            # Walk through each individual sequence payload output safely
+            for idx, raw_out in enumerate(output):
+                raw_arr = np.array(raw_out)
+
+                # Format 1: If response is 2D (sequence_length, embedding_dim)
+                if len(raw_arr.shape) == 2:
+                    if raw_arr.shape[0] > 2:
+                        # Mean pool the sequence length, dropping BOS/EOS tokens
+                        mean_emb = raw_arr[1:-1, :].mean(axis=0)
+                    else:
+                        mean_emb = raw_arr.mean(axis=0)
+                # Format 2: If response is 1D (already global pooled layer)
+                elif len(raw_arr.shape) == 1:
+                    mean_emb = raw_arr
+                # Format 3: Mismatch fallback
+                else:
+                    print(f"Unexpected array dimensions from index {idx}: {raw_arr.shape}")
+                    continue
+
+                # Match the expected embedding space configuration input (1280 features)
+                if mean_emb.shape[0] == 1280:
+                    embeddings_dict[idx] = mean_emb
+                else:
+                    print(f"Warning: Extracted embedding dimension mismatch. Shape found: {mean_emb.shape}")
         else:
             print(f"HF API Error: Status {response.status_code} - {response.text}")
     except Exception as e:
